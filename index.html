@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔥 HELP KIT ULTRA DOWNLOADER 🔥</title>
+    <style>
+        :root {
+            --primary: #6c5ce7;
+            --success: #00b894;
+            --danger: #ff4757;
+            --dark: #2f3542;
+        }
+        
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--dark);
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 500px;
+            padding: 20px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+        }
+        
+        h1 {
+            color: var(--primary);
+            margin-bottom: 30px;
+            font-size: 2.2rem;
+        }
+        
+        .file-icon {
+            font-size: 80px;
+            display: block;
+            margin: 0 auto 20px;
+            color: var(--primary);
+        }
+        
+        .file-info {
+            margin-bottom: 25px;
+        }
+        
+        .file-name {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .file-size {
+            color: #747d8c;
+            font-size: 1rem;
+        }
+        
+        .status {
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+        }
+        
+        .available {
+            background: rgba(0, 184, 148, 0.2);
+            color: var(--success);
+        }
+        
+        .unavailable {
+            background: rgba(255, 71, 87, 0.1);
+            color: var(--danger);
+        }
+        
+        .download-btn {
+            display: inline-block;
+            padding: 15px 30px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            width: 80%;
+            max-width: 300px;
+            margin-top: 10px;
+        }
+        
+        .download-btn:hover {
+            background: #5649d6;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(108, 92, 231, 0.3);
+        }
+        
+        .download-btn:disabled {
+            background: #dfe4ea;
+            color: #747d8c;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h1>POBERZ HELP KIT</h1>
+            <div class="file-icon">📦</div>
+            
+            <div class="file-info">
+                <div class="file-name">HelpKitToolNeededStuff.zip</div>
+                <div class="file-size">158 MB</div>
+            </div>
+            
+            <div id="status" class="status">SPRAWDZANIE...</div>
+            <button id="downloadBtn" class="download-btn" disabled>POBIERZ</button>
+        </div>
+    </div>
+
+    <script>
+        const filename = "HelpKitToolNeededStuff.zip";
+        const downloadBtn = document.getElementById("downloadBtn");
+        const statusEl = document.getElementById("status");
+
+        // Funkcja sprawdzająca dostępność pliku
+        async function checkFile() {
+            try {
+                // Metoda działająca na hostingu
+                const response = await fetch(filename, { method: 'HEAD' });
+                
+                if (response.ok) {
+                    statusEl.textContent = "DOSTĘPNY";
+                    statusEl.className = "status available";
+                    downloadBtn.disabled = false;
+                    
+                    downloadBtn.onclick = () => {
+                        // Prawdziwe pobieranie
+                        const link = document.createElement("a");
+                        link.href = filename;
+                        link.download = filename;
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                    };
+                } else {
+                    throw new Error("File not found");
+                }
+            } catch (error) {
+                statusEl.textContent = "NIEDOSTĘPNY";
+                statusEl.className = "status unavailable";
+                downloadBtn.disabled = true;
+            }
+        }
+
+        // Start
+        checkFile();
+    </script>
+</body>
+</html>
