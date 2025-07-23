@@ -3,16 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🚀 Premium Download Center 🚀</title>
+    <title>✨ Elite Digital Vault ✨</title>
     <style>
         :root {
-            --primary: #4361ee;
-            --secondary: #3a0ca3;
-            --success: #4cc9f0;
-            --danger: #f72585;
-            --dark: #1a1a2e;
+            --primary: #7b2cbf;
+            --secondary: #5a189a;
+            --accent: #e0aaff;
+            --dark: #10002b;
             --light: #f8f9fa;
-            --card-bg: rgba(255, 255, 255, 0.08);
+            --card-bg: rgba(255, 255, 255, 0.05);
         }
         
         * {
@@ -23,7 +22,7 @@
         
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            background: linear-gradient(135deg, #10002b, #240046, #3c096c);
             min-height: 100vh;
             color: white;
             padding: 2rem;
@@ -38,92 +37,86 @@
         header {
             text-align: center;
             margin-bottom: 3rem;
+            animation: fadeIn 1s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         
         h1 {
-            font-size: 2.8rem;
+            font-size: 3rem;
             margin-bottom: 1rem;
-            background: linear-gradient(90deg, #00dbde, #fc00ff);
+            background: linear-gradient(90deg, #c77dff, #9d4edd);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            letter-spacing: -0.5px;
+            letter-spacing: -1px;
+            font-weight: 800;
         }
         
         .subtitle {
             color: rgba(255, 255, 255, 0.7);
-            font-size: 1.1rem;
-            max-width: 700px;
+            font-size: 1.2rem;
+            max-width: 600px;
             margin: 0 auto;
-        }
-        
-        .stats-card {
-            background: var(--card-bg);
-            backdrop-filter: blur(10px);
-            border-radius: 16px;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-        }
-        
-        .stat-item {
-            text-align: center;
-            flex: 1;
-        }
-        
-        .stat-value {
-            font-size: 2rem;
-            font-weight: 700;
-            background: linear-gradient(90deg, #72ffb6, #10d3d9);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-        
-        .stat-label {
-            font-size: 0.9rem;
-            color: rgba(255, 255, 255, 0.7);
-            margin-top: 0.5rem;
         }
         
         .files-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 1.5rem;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
         }
         
         .file-card {
             background: var(--card-bg);
-            backdrop-filter: blur(10px);
-            border-radius: 16px;
-            padding: 1.5rem;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            backdrop-filter: blur(12px);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1);
             display: flex;
             flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .file-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #7b2cbf, #e0aaff);
         }
         
         .file-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
-            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+            border-color: rgba(255, 255, 255, 0.15);
         }
         
         .file-header {
             display: flex;
             align-items: center;
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
         }
         
         .file-icon {
-            font-size: 2.5rem;
-            margin-right: 1rem;
+            font-size: 3rem;
+            margin-right: 1.5rem;
             flex-shrink: 0;
+            background: rgba(123, 44, 191, 0.2);
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
         .file-info {
@@ -131,103 +124,86 @@
         }
         
         .file-name {
-            font-weight: 600;
-            font-size: 1.1rem;
-            margin-bottom: 0.2rem;
+            font-weight: 700;
+            font-size: 1.3rem;
+            margin-bottom: 0.3rem;
             word-break: break-word;
         }
         
         .file-size {
+            color: var(--accent);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        
+        .file-description {
             color: rgba(255, 255, 255, 0.6);
-            font-size: 0.85rem;
-        }
-        
-        .file-status {
-            margin-top: auto;
-        }
-        
-        .status-badge {
-            display: inline-block;
-            padding: 0.4rem 0.8rem;
-            border-radius: 50px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-        }
-        
-        .status-available {
-            background: rgba(46, 213, 115, 0.2);
-            color: #2ed573;
-        }
-        
-        .status-unavailable {
-            background: rgba(255, 71, 87, 0.2);
-            color: #ff4757;
+            font-size: 0.95rem;
+            margin: 1.5rem 0;
+            line-height: 1.7;
         }
         
         .btn {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            padding: 0.8rem 1.5rem;
-            border-radius: 50px;
+            padding: 1rem 2rem;
+            border-radius: 12px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s;
             border: none;
             outline: none;
             width: 100%;
-            font-size: 0.95rem;
-        }
-        
-        .btn-primary {
-            background: linear-gradient(90deg, #4361ee, #3a0ca3);
-            color: white;
-        }
-        
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.4);
-        }
-        
-        .btn-primary:disabled {
-            background: #555;
-            cursor: not-allowed;
-            transform: none !important;
-            box-shadow: none !important;
-        }
-        
-        .cooldown-info {
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 0.85rem;
-            text-align: center;
-            margin-top: 0.5rem;
-        }
-        
-        .progress-container {
-            width: 100%;
-            height: 6px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 3px;
-            margin-top: 1rem;
+            font-size: 1rem;
+            margin-top: auto;
+            position: relative;
             overflow: hidden;
+            z-index: 1;
         }
         
-        .progress-bar {
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, #4cc9f0, #4361ee);
-            border-radius: 3px;
-            transition: width 0.3s ease;
+            background: linear-gradient(90deg, #7b2cbf, #9d4edd);
+            z-index: -1;
+            transition: all 0.3s;
+        }
+        
+        .btn:hover::after {
+            transform: scale(1.05);
+        }
+        
+        .btn:hover {
+            box-shadow: 0 5px 20px rgba(123, 44, 191, 0.4);
+        }
+        
+        .btn-icon {
+            margin-left: 8px;
+            transition: transform 0.3s;
+        }
+        
+        .btn:hover .btn-icon {
+            transform: translateX(3px);
         }
         
         @media (max-width: 768px) {
-            .stats-card {
-                flex-direction: column;
-                gap: 1.5rem;
+            h1 {
+                font-size: 2.2rem;
             }
             
-            h1 {
-                font-size: 2rem;
+            .files-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .file-icon {
+                width: 60px;
+                height: 60px;
+                font-size: 2.5rem;
             }
         }
     </style>
@@ -235,20 +211,9 @@
 <body>
     <div class="container">
         <header>
-            <h1>Premium Download Center</h1>
-            <p class="subtitle">Access high-quality resources with your download credits. Credits refresh automatically.</p>
+            <h1>Elite Digital Vault</h1>
+            <p class="subtitle">Premium resources for professionals. Unlimited access, no restrictions.</p>
         </header>
-        
-        <div class="stats-card">
-            <div class="stat-item">
-                <div class="stat-value" id="downloadsLeft">5</div>
-                <div class="stat-label">Downloads Remaining</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-value" id="restockTimer">60:00</div>
-                <div class="stat-label">Until Next Restock</div>
-            </div>
-        </div>
         
         <div class="files-grid" id="filesContainer">
             <!-- File cards will be generated here -->
@@ -259,39 +224,30 @@
         // Configuration
         const config = {
             files: [
-                { name: "HelpKitToolNeededStuff.zip", size: "158 MB", icon: "📦", description: "Essential tools and resources" },
-                { name: "PremiumTemplates.rar", size: "89 MB", icon: "🎨", description: "Professional design templates" },
-                { name: "SecretDocuments.zip", size: "42 MB", icon: "🔒", description: "Confidential project files" },
-            ],
-            cooldownHours: 1, // Restock every 1 hour
-            maxDownloads: 5,  // Max 5 downloads
-            randomStock: true // Enable random stock availability
-        };
-        
-        // App state
-        let state = {
-            downloadsLeft: localStorage.getItem('downloadsLeft') || config.maxDownloads,
-            nextRestockTime: localStorage.getItem('nextRestockTime') || (Date.now() + (config.cooldownHours * 60 * 60 * 1000)),
-            files: {}
+                { 
+                    name: "HelpKitToolNeededStuff.zip", 
+                    size: "215 MB", 
+                    icon: "🔴🟩🔴", 
+                    description: "Special Hacking tool [simulation]" 
+                },
+                { 
+                    name: "???.rar", 
+                    size: "178 MB", 
+                    icon: "💻", 
+                    description: "?" 
+                },
+                { 
+                    name: "???.7z", 
+                    size: "342 MB", 
+                    icon: "🔑", 
+                    description: "?" 
+                }
+            ]
         };
         
         // Initialize the app
-        async function init() {
-            // Initialize random stock if enabled
-            if (config.randomStock) {
-                config.files.forEach(file => {
-                    state.files[file.name] = {
-                        available: Math.random() > 0.3 // 70% chance of being available
-                    };
-                });
-            }
-            
-            updateGlobalUI();
+        function init() {
             renderFiles();
-            startRestockTimer();
-            
-            // Check file availability periodically
-            setInterval(checkFilesAvailability, 30000);
         }
         
         // Render file cards
@@ -301,58 +257,34 @@
             
             for (const file of config.files) {
                 const exists = await checkFileExists(file.name);
-                const isAvailable = exists && (state.files[file.name]?.available ?? true);
-                const card = createFileCard(file, isAvailable);
+                const card = createFileCard(file, exists);
                 container.appendChild(card);
             }
         }
         
         // Create a file card element
-        function createFileCard(file, isAvailable) {
+        function createFileCard(file, exists) {
             const card = document.createElement("div");
             card.className = "file-card";
-            
-            const canDownload = isAvailable && state.downloadsLeft > 0;
-            const timeLeft = state.nextRestockTime - Date.now();
-            const progressPercent = Math.max(0, Math.min(100, 100 - (timeLeft / (config.cooldownHours * 60 * 60 * 1000) * 100)));
             
             card.innerHTML = `
                 <div class="file-header">
                     <div class="file-icon">${file.icon}</div>
                     <div class="file-info">
                         <div class="file-name">${file.name}</div>
-                        <div class="file-size">${file.size} • ${file.description}</div>
+                        <div class="file-size">${file.size}</div>
                     </div>
                 </div>
                 
-                <div class="file-status">
-                    <div class="status-badge ${canDownload ? 'status-available' : 'status-unavailable'}">
-                        ${canDownload ? 'Available' : 'Unavailable'}
-                    </div>
-                </div>
+                <div class="file-description">${file.description}</div>
                 
-                <button class="btn btn-primary" 
-                        ${canDownload ? '' : 'disabled'}
-                        data-filename="${file.name}">
-                    Download Now
+                <button class="btn" data-filename="${file.name}" ${exists ? '' : 'disabled'}>
+                    ${exists ? 'Download Now' : 'Coming Soon'}
+                    <span class="btn-icon">${exists ? '↓' : '⌛'}</span>
                 </button>
-                
-                ${state.downloadsLeft <= 0 ? `
-                    <div class="cooldown-info">
-                        Next restock in: ${formatTime(timeLeft)}
-                    </div>
-                    <div class="progress-container">
-                        <div class="progress-bar" style="width: ${progressPercent}%"></div>
-                    </div>
-                ` : ''}
             `;
             
             return card;
-        }
-        
-        // Check if files are available
-        async function checkFilesAvailability() {
-            renderFiles();
         }
         
         // Check if a file exists
@@ -365,120 +297,45 @@
             }
         }
         
-        // Format time (mm:ss)
-        function formatTime(ms) {
-            const minutes = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((ms % (1000 * 60)) / 1000);
-            return `${Math.max(0, minutes)}:${Math.max(0, seconds).toString().padStart(2, '0')}`;
-        }
-        
-        // Update global UI elements
-        function updateGlobalUI() {
-            document.getElementById("downloadsLeft").textContent = state.downloadsLeft;
-            document.getElementById("restockTimer").textContent = formatTime(state.nextRestockTime - Date.now());
-        }
-        
-        // Restock timer (always running)
-        function startRestockTimer() {
-            // Check if we need to restock immediately
-            if (Date.now() >= state.nextRestockTime) {
-                performRestock();
-            }
-            
-            // Update timer every second
-            setInterval(() => {
-                const timeLeft = state.nextRestockTime - Date.now();
-                
-                if (timeLeft <= 0) {
-                    performRestock();
-                }
-                
-                updateGlobalUI();
-            }, 1000);
-        }
-        
-        // Perform the restock
-        function performRestock() {
-            state.downloadsLeft = config.maxDownloads;
-            state.nextRestockTime = Date.now() + (config.cooldownHours * 60 * 60 * 1000);
-            
-            // Randomize stock again if enabled
-            if (config.randomStock) {
-                config.files.forEach(file => {
-                    state.files[file.name] = {
-                        available: Math.random() > 0.3 // 70% chance of being available
-                    };
-                });
-            }
-            
-            localStorage.setItem('downloadsLeft', state.downloadsLeft);
-            localStorage.setItem('nextRestockTime', state.nextRestockTime);
-            
-            updateGlobalUI();
-            renderFiles();
-        }
-        
         // Handle clicks
         document.addEventListener("click", async (e) => {
-            // File download
-            if (e.target.classList.contains("btn-primary") && !e.target.disabled) {
+            if (e.target.classList.contains("btn") && !e.target.disabled) {
                 const filename = e.target.getAttribute("data-filename");
-                
-                if (state.downloadsLeft > 0) {
-                    // Actual download
-                    const link = document.createElement("a");
-                    link.href = filename;
-                    link.download = filename;
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                    
-                    // Update state (without affecting timer)
-                    state.downloadsLeft--;
-                    localStorage.setItem('downloadsLeft', state.downloadsLeft);
-                    
-                    updateGlobalUI();
-                    renderFiles();
-                }
+                downloadFile(filename);
             }
         });
+        
+        // Download file
+        function downloadFile(filename) {
+            const link = document.createElement("a");
+            link.href = filename;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            // Add visual feedback
+            const btn = document.querySelector(`[data-filename="${filename}"]`);
+            if (btn) {
+                btn.innerHTML = 'Downloaded! ✓';
+                btn.style.background = '#2ed573';
+                setTimeout(() => {
+                    btn.innerHTML = 'Download Again <span class="btn-icon">↻</span>';
+                    btn.style.background = '';
+                }, 2000);
+            }
+        }
         
         // Start the app
         init();
 
-        // ===== Console Commands ===== //
-        // Skip time (for testing)
-        window.skipTime = function(hours) {
-            state.nextRestockTime = Date.now() - (hours * 60 * 60 * 1000);
-            localStorage.setItem('nextRestockTime', state.nextRestockTime);
-            updateGlobalUI();
-            renderFiles();
-            console.log(`⏩ Skipped ${hours} hours! Restock should trigger now.`);
-        };
-
-        // Force restock now
-        window.forceRestock = function() {
-            performRestock();
-            console.log("🔁 Forced restock completed!");
-        };
-
-        // Set downloads to 0 (test cooldown)
-        window.exhaustDownloads = function() {
-            state.downloadsLeft = 0;
-            localStorage.setItem('downloadsLeft', state.downloadsLeft);
-            updateGlobalUI();
-            renderFiles();
-            console.log("⛔ Set downloads to 0 - cooldown active");
-        };
-
-        // Check current state
-        window.checkState = function() {
-            console.log({
-                downloadsLeft: state.downloadsLeft,
-                nextRestock: new Date(state.nextRestockTime),
-                timeUntilRestock: formatTime(state.nextRestockTime - Date.now()),
-                files: state.files
-            });
+        // Console command to check file status
+        window.checkFiles = async function() {
+            const results = {};
+            for (const file of config.files) {
+                results[file.name] = await checkFileExists(file.name);
+            }
+            console.table(results);
         };
     </script>
 </body>
