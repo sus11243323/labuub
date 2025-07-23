@@ -264,22 +264,33 @@
                 { name: "SecretDocuments.zip", size: "42 MB", icon: "🔒", description: "Confidential project files" },
             ],
             cooldownHours: 1, // Restock every 1 hour
-            maxDownloads: 5   // Max 5 downloads
+            maxDownloads: 5,  // Max 5 downloads
+            randomStock: true // Enable random stock availability
         };
         
         // App state
         let state = {
             downloadsLeft: localStorage.getItem('downloadsLeft') || config.maxDownloads,
-            lastDownloadTime: localStorage.getItem('lastDownloadTime') || 0
+            nextRestockTime: localStorage.getItem('nextRestockTime') || (Date.now() + (config.cooldownHours * 60 * 60 * 1000)),
+            files: {}
         };
         
         // Initialize the app
         async function init() {
+            // Initialize random stock if enabled
+            if (config.randomStock) {
+                config.files.forEach(file => {
+                    state.files[file.name] = {
+                        available: Math.random() > 0.3 // 70% chance of being available
+                    };
+                });
+            }
+            
             updateGlobalUI();
             renderFiles();
             startRestockTimer();
             
-            // Check file availability every 30 seconds
+            // Check file availability periodically
             setInterval(checkFilesAvailability, 30000);
         }
         
@@ -290,19 +301,19 @@
             
             for (const file of config.files) {
                 const exists = await checkFileExists(file.name);
-                const card = createFileCard(file, exists);
+                const isAvailable = exists && (state.files[file.name]?.available ?? true);
+                const card = createFileCard(file, isAvailable);
                 container.appendChild(card);
             }
         }
         
         // Create a file card element
-        function createFileCard(file, exists) {
+        function createFileCard(file, isAvailable) {
             const card = document.createElement("div");
             card.className = "file-card";
             
-            const isAvailable = exists && state.downloadsLeft > 0;
-            const cooldownEnd = state.lastDownloadTime + (config.cooldownHours * 60 * 60 * 1000);
-            const timeLeft = cooldownEnd - Date.now();
+            const canDownload = isAvailable && state.downloadsLeft > 0;
+            const timeLeft = state.nextRestockTime - Date.now();
             const progressPercent = Math.max(0, Math.min(100, 100 - (timeLeft / (config.cooldownHours * 60 * 60 * 1000) * 100)));
             
             card.innerHTML = `
@@ -315,13 +326,13 @@
                 </div>
                 
                 <div class="file-status">
-                    <div class="status-badge ${isAvailable ? 'status-available' : 'status-unavailable'}">
-                        ${isAvailable ? 'Available' : 'Unavailable'}
+                    <div class="status-badge ${canDownload ? 'status-available' : 'status-unavailable'}">
+                        ${canDownload ? 'Available' : 'Unavailable'}
                     </div>
                 </div>
                 
                 <button class="btn btn-primary" 
-                        ${isAvailable ? '' : 'disabled'}
+                        ${canDownload ? '' : 'disabled'}
                         data-filename="${file.name}">
                     Download Now
                 </button>
@@ -364,23 +375,47 @@
         // Update global UI elements
         function updateGlobalUI() {
             document.getElementById("downloadsLeft").textContent = state.downloadsLeft;
+            document.getElementById("restockTimer").textContent = formatTime(state.nextRestockTime - Date.now());
         }
         
-        // Restock timer
+        // Restock timer (always running)
         function startRestockTimer() {
+            // Check if we need to restock immediately
+            if (Date.now() >= state.nextRestockTime) {
+                performRestock();
+            }
+            
+            // Update timer every second
             setInterval(() => {
-                const cooldownEnd = state.lastDownloadTime + (config.cooldownHours * 60 * 60 * 1000);
-                const timeLeft = cooldownEnd - Date.now();
+                const timeLeft = state.nextRestockTime - Date.now();
                 
-                if (timeLeft <= 0 && state.downloadsLeft <= 0) {
-                    state.downloadsLeft = config.maxDownloads;
-                    localStorage.setItem('downloadsLeft', state.downloadsLeft);
-                    updateGlobalUI();
-                    renderFiles();
+                if (timeLeft <= 0) {
+                    performRestock();
                 }
                 
-                document.getElementById("restockTimer").textContent = formatTime(timeLeft);
+                updateGlobalUI();
             }, 1000);
+        }
+        
+        // Perform the restock
+        function performRestock() {
+            state.downloadsLeft = config.maxDownloads;
+            state.nextRestockTime = Date.now() + (config.cooldownHours * 60 * 60 * 1000);
+            
+            // Randomize stock again if enabled
+            if (config.randomStock) {
+                config.files.forEach(file => {
+                    state.files[file.name] = {
+                        available: Math.random() > 0.3 // 70% chance of being available
+                    };
+                });
+            }
+            
+            localStorage.setItem('downloadsLeft', state.downloadsLeft);
+            localStorage.setItem('nextRestockTime', state.nextRestockTime);
+            
+            updateGlobalUI();
+            renderFiles();
         }
         
         // Handle clicks
@@ -398,11 +433,9 @@
                     link.click();
                     document.body.removeChild(link);
                     
-                    // Update state
+                    // Update state (without affecting timer)
                     state.downloadsLeft--;
-                    state.lastDownloadTime = Date.now();
                     localStorage.setItem('downloadsLeft', state.downloadsLeft);
-                    localStorage.setItem('lastDownloadTime', state.lastDownloadTime);
                     
                     updateGlobalUI();
                     renderFiles();
@@ -412,6 +445,41 @@
         
         // Start the app
         init();
+
+        // ===== Console Commands ===== //
+        // Skip time (for testing)
+        window.skipTime = function(hours) {
+            state.nextRestockTime = Date.now() - (hours * 60 * 60 * 1000);
+            localStorage.setItem('nextRestockTime', state.nextRestockTime);
+            updateGlobalUI();
+            renderFiles();
+            console.log(`⏩ Skipped ${hours} hours! Restock should trigger now.`);
+        };
+
+        // Force restock now
+        window.forceRestock = function() {
+            performRestock();
+            console.log("🔁 Forced restock completed!");
+        };
+
+        // Set downloads to 0 (test cooldown)
+        window.exhaustDownloads = function() {
+            state.downloadsLeft = 0;
+            localStorage.setItem('downloadsLeft', state.downloadsLeft);
+            updateGlobalUI();
+            renderFiles();
+            console.log("⛔ Set downloads to 0 - cooldown active");
+        };
+
+        // Check current state
+        window.checkState = function() {
+            console.log({
+                downloadsLeft: state.downloadsLeft,
+                nextRestock: new Date(state.nextRestockTime),
+                timeUntilRestock: formatTime(state.nextRestockTime - Date.now()),
+                files: state.files
+            });
+        };
     </script>
 </body>
 </html>
