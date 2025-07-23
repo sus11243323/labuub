@@ -1,1 +1,355 @@
-fdfdsf
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔥 MULTI-FILE DOWNLOAD CENTER 🔥</title>
+    <style>
+        :root {
+            --primary: #6c5ce7;
+            --secondary: #a29bfe;
+            --success: #00b894;
+            --danger: #d63031;
+            --warning: #fdcb6e;
+            --dark: #2d3436;
+            --light: #f5f6fa;
+        }
+        
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            color: white;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            background: linear-gradient(90deg, #00d2ff, #3a7bd5);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .files-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .file-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .file-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+        
+        .file-icon {
+            font-size: 50px;
+            text-align: center;
+            margin: 10px 0;
+        }
+        
+        .file-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+            text-align: center;
+        }
+        
+        .file-size {
+            color: rgba(255, 255, 255, 0.7);
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+        
+        .status {
+            display: inline-block;
+            padding: 8px 15px;
+            border-radius: 50px;
+            font-weight: bold;
+            margin: 10px auto;
+            font-size: 0.9rem;
+            text-align: center;
+            width: fit-content;
+        }
+        
+        .available {
+            background: rgba(0, 255, 128, 0.2);
+            color: #00ff80;
+        }
+        
+        .unavailable {
+            background: rgba(255, 71, 87, 0.2);
+            color: #ff4757;
+        }
+        
+        .download-btn {
+            display: block;
+            padding: 10px 20px;
+            background: linear-gradient(90deg, #00d2ff, #3a7bd5);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            margin: 15px auto 0;
+            width: 80%;
+        }
+        
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 210, 255, 0.4);
+        }
+        
+        .download-btn:disabled {
+            background: #555;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+        
+        .restock-info {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.8rem;
+            text-align: center;
+            margin-top: 10px;
+        }
+        
+        .pay-btn {
+            background: linear-gradient(90deg, #fdcb6e, #e17055);
+            margin-top: 10px;
+        }
+        
+        .pay-btn:hover {
+            box-shadow: 0 5px 15px rgba(253, 203, 110, 0.4);
+        }
+        
+        .global-stats {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>PREMIUM DOWNLOAD CENTER</h1>
+        
+        <div class="global-stats">
+            <div>Limit pobrań: <span id="globalDownloadsLeft">5</span>/5</div>
+            <div id="globalRestockInfo">Następny restock za: <span id="restockTimer">60:00</span></div>
+        </div>
+        
+        <div class="files-grid" id="filesContainer">
+            <!-- Karty plików będą generowane tutaj -->
+        </div>
+    </div>
+
+    <script>
+        // Konfiguracja
+        const config = {
+            files: [
+                { name: "HelpKitToolNeededStuff.zip", size: "158 MB", icon: "📦" },
+                { name: "PremiumTemplates.rar", size: "89 MB", icon: "🎨" },
+                { name: "SecretDocuments.zip", size: "42 MB", icon: "🔒" },
+            ],
+            price: 2,
+            cooldownHours: 1, // Restock co 1 godzinę
+            maxDownloads: 5   // Maksymalnie 5 pobrań
+        };
+        
+        // Stan aplikacji
+        let state = {
+            downloadsLeft: localStorage.getItem('downloadsLeft') || config.maxDownloads,
+            lastDownloadTime: localStorage.getItem('lastDownloadTime') || 0,
+            files: {}
+        };
+        
+        // Inicjalizacja
+        async function init() {
+            // Inicjalizacja stanu dla każdego pliku
+            config.files.forEach(file => {
+                state.files[file.name] = {
+                    available: true,
+                    lastDownloadTime: 0
+                };
+            });
+            
+            updateGlobalUI();
+            renderFiles();
+            startRestockTimer();
+            
+            // Sprawdzaj dostępność co 30 sekund
+            setInterval(checkFilesAvailability, 30000);
+        }
+        
+        // Renderowanie kart plików
+        async function renderFiles() {
+            const container = document.getElementById("filesContainer");
+            container.innerHTML = "";
+            
+            for (const file of config.files) {
+                const exists = await checkFileExists(file.name);
+                const card = createFileCard(file, exists);
+                container.appendChild(card);
+            }
+        }
+        
+        // Tworzenie karty pliku
+        function createFileCard(file, exists) {
+            const card = document.createElement("div");
+            card.className = "file-card";
+            
+            const isAvailable = exists && state.downloadsLeft > 0;
+            const cooldownEnd = state.lastDownloadTime + (config.cooldownHours * 60 * 60 * 1000);
+            const timeLeft = cooldownEnd - Date.now();
+            
+            card.innerHTML = `
+                <div class="file-icon">${file.icon}</div>
+                <div class="file-name">${file.name}</div>
+                <div class="file-size">${file.size}</div>
+                
+                <div class="status ${isAvailable ? 'available' : 'unavailable'}">
+                    ${isAvailable ? 'DOSTĘPNY' : 'NIEDOSTĘPNY'}
+                </div>
+                
+                <button class="download-btn" 
+                        ${isAvailable ? '' : 'disabled'}
+                        data-filename="${file.name}">
+                    POBIERZ
+                </button>
+                
+                ${state.downloadsLeft <= 0 ? `
+                    <div class="restock-info">
+                        ${timeLeft > 0 ? 
+                            `Restock za: ${formatTime(timeLeft)}` : 
+                            'Kliknij aby odświeżyć'}
+                    </div>
+                    <button class="download-btn pay-btn" data-filename="${file.name}">
+                        ZAPŁAĆ $${config.price} ZA RESTOCK
+                    </button>
+                ` : ''}
+            `;
+            
+            return card;
+        }
+        
+        // Sprawdza dostępność plików
+        async function checkFilesAvailability() {
+            for (const file of config.files) {
+                const exists = await checkFileExists(file.name);
+                state.files[file.name].available = exists;
+            }
+            renderFiles();
+        }
+        
+        // Sprawdza czy plik istnieje
+        async function checkFileExists(filename) {
+            try {
+                const response = await fetch(filename, { method: 'HEAD' });
+                return response.ok;
+            } catch (error) {
+                return false;
+            }
+        }
+        
+        // Formatuje czas (mm:ss)
+        function formatTime(ms) {
+            const minutes = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((ms % (1000 * 60)) / 1000);
+            return `${Math.max(0, minutes)}:${Math.max(0, seconds).toString().padStart(2, '0')}`;
+        }
+        
+        // Aktualizacja globalnego UI
+        function updateGlobalUI() {
+            document.getElementById("globalDownloadsLeft").textContent = state.downloadsLeft;
+        }
+        
+        // Timer restocku
+        function startRestockTimer() {
+            setInterval(() => {
+                const cooldownEnd = state.lastDownloadTime + (config.cooldownHours * 60 * 60 * 1000);
+                const timeLeft = cooldownEnd - Date.now();
+                
+                if (timeLeft <= 0 && state.downloadsLeft <= 0) {
+                    state.downloadsLeft = config.maxDownloads;
+                    localStorage.setItem('downloadsLeft', state.downloadsLeft);
+                    updateGlobalUI();
+                    renderFiles();
+                }
+                
+                document.getElementById("restockTimer").textContent = formatTime(timeLeft);
+            }, 1000);
+        }
+        
+        // Obsługa kliknięć
+        document.addEventListener("click", async (e) => {
+            // Pobieranie pliku
+            if (e.target.classList.contains("download-btn") && !e.target.classList.contains("pay-btn")) {
+                const filename = e.target.getAttribute("data-filename");
+                
+                if (state.downloadsLeft > 0) {
+                    // Prawdziwe pobieranie
+                    const link = document.createElement("a");
+                    link.href = filename;
+                    link.download = filename;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    
+                    // Aktualizacja stanu
+                    state.downloadsLeft--;
+                    state.lastDownloadTime = Date.now();
+                    localStorage.setItem('downloadsLeft', state.downloadsLeft);
+                    localStorage.setItem('lastDownloadTime', state.lastDownloadTime);
+                    
+                    updateGlobalUI();
+                    renderFiles();
+                }
+            }
+            
+            // Płatność za restock
+            if (e.target.classList.contains("pay-btn")) {
+                if (confirm(`Czy na pewno chcesz zapłacić $${config.price} za natychmiastowy restock?`)) {
+                    // Symulacja płatności
+                    alert(`Płatność $${config.price} zakończona sukcesem!`);
+                    
+                    // Restock
+                    state.downloadsLeft = config.maxDownloads;
+                    state.lastDownloadTime = 0;
+                    localStorage.setItem('downloadsLeft', state.downloadsLeft);
+                    localStorage.setItem('lastDownloadTime', 0);
+                    
+                    updateGlobalUI();
+                    renderFiles();
+                }
+            }
+        });
+        
+        // Start aplikacji
+        init();
+    </script>
+</body>
+</html>
